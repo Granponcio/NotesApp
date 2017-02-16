@@ -2,7 +2,7 @@ var app = angular.module('myApp',['ngFileUpload']);
 
 //-----Function to filter the list of notes --------
 app.filter('searchFilter', function ($filter) {
-    debugger
+     
     return function (items, searchfilter) {
         var isSearchFilterEmpty = true;
         angular.forEach(searchfilter, function (searchstring) {
@@ -43,7 +43,7 @@ $scope.Notes=[];
 
 //------Check if we have Notes in LocalStorage ------
 $scope.CheckLocalStorage = function () {
-    debugger
+     
     let items = localStorage.getItem('lstNotes')
     if(items!=null && items != "")
         $scope.ListNotes= JSON.parse(items);
@@ -62,7 +62,7 @@ $scope.EditDictionary = function () {
 
 //--------EDIT A WORD FROM THE DICTIONARY---------//
 $scope.SaveDictionaryWord = function (word) {
-    debugger
+     
     let pos = $scope.Dictionary.map(function (e) { return e.id; }).indexOf(word.id);
     $scope.Dictionary[pos].text= word.text;
 
@@ -72,7 +72,7 @@ $scope.SaveDictionaryWord = function (word) {
 
 //---------UPLOAD FILE DICTIONARY --------//
 $scope.ReadFile = function () {
-    debugger
+     
     var File = $scope.FileDictionary;
     if (File) {
       var r = new FileReader();
@@ -90,7 +90,7 @@ $scope.ReadFile = function () {
 
 //
 $scope.InsertWords= function(){
-    debugger
+     
     
     if($scope.WordsFromFile!= undefined){
         let separatedWords = $scope.WordsFromFile.split(",");
@@ -102,6 +102,7 @@ $scope.InsertWords= function(){
             $scope.Dictionary.push(value);
         }
         localStorage.setItem('Dictionary', JSON.stringify($scope.Dictionary));
+        swal("Success!", "Your dictionary has been updated!", "success");
     }
 
 
@@ -116,7 +117,7 @@ $scope.AddNewNote = function () {
 $scope.SaveNote = function () {
 
         $scope.$broadcast('show-errors-check-validity', $scope.NotesForm);
-        debugger
+         
         if($scope.NotesForm.$valid)
         {
             var idNote = $scope.getNextId();
@@ -134,7 +135,7 @@ $scope.SaveNote = function () {
                 $scope.ClearAndHide();
                 }
                 else{
-                    debugger
+                     
                     //If this lines hits, it means that we already have Notes in our localStorage
                      let items = localStorage.getItem('lstNotes')
                      let objNote = JSON.parse(items);
@@ -179,7 +180,7 @@ $scope.SaveNote = function () {
 
 //---------------METHOD TO REPLACE THE WORDS WITH THE DICTIONARY AND GIVEN RULES ------------//
 $scope.ReplaceText = function(event){
-    debugger
+     
     //Detect if the barspace is pressed
     if(event.keyCode === 32){
             var arrWords = ($scope.Note.text).split(" ");
@@ -220,7 +221,7 @@ $scope.ReplaceText = function(event){
 //---------------SEARCH METHOD----------//
 $scope.Search = function(){
         $scope.Filter = [];
-        debugger
+         
         $scope.Filter.push($scope.SearchText);
 
 
@@ -229,7 +230,7 @@ $scope.Search = function(){
 
 //-----------------EDIT NOTE -----------//
 $scope.ViewNote = function (note) {
-        debugger
+         
         $("#ModalNote").modal('show');
         //Clone the note object, to no change the original
         var previousobj =jQuery.extend({}, note);
@@ -239,7 +240,7 @@ $scope.ViewNote = function (note) {
 
 //-----------------DELETE NOTE -----------//
 $scope.DeleteNote = function (note) {
-        debugger
+         
         swal({
           title: "Are you sure?",
           text: "You will not be able to recover this note!",
@@ -253,7 +254,7 @@ $scope.DeleteNote = function (note) {
         },
         function(isConfirm){
           if (isConfirm) {
-            debugger
+             
 
             $scope.DeleteAndResetIds(note);
 
@@ -270,7 +271,7 @@ $scope.DeleteNote = function (note) {
     };
 //-------------CHANGE COLOR NOTES------------//
 $scope.ChangeNoteColor = function (colorclass) {
-        debugger
+         
         $(".noteGallery").removeClass('c1');
         $(".noteGallery").removeClass('c2');
         $(".noteGallery").removeClass('c3');
@@ -285,7 +286,7 @@ $scope.ChangeNoteColor = function (colorclass) {
     };
     
 $scope.DisplayPalette = function (colorclass) {
-        debugger
+         
         swal("¡Alerta!", "Favor de completar los campos marcados en rojo.", "warning");
         $("#note").addClass(colorclass);
 
@@ -316,7 +317,7 @@ $scope.DeleteContent = function () {
         },
         function(isConfirm){
           if (isConfirm) {
-            debugger
+             
 
             $scope.ClearLocalStorage();
 
@@ -331,7 +332,7 @@ $scope.DeleteContent = function () {
     };
 
 $scope.DeleteAndResetIds = function(note){
-    debugger
+     
             let checkListNotes = localStorage.getItem('lstNotes');
             let objNote = JSON.parse(checkListNotes);
 
@@ -355,7 +356,7 @@ $scope.DeleteAndResetIds = function(note){
 
 };
 $scope.getNextId = function () {
-        debugger
+         
         let existingNotes = localStorage.getItem('lstNotes');
         //If this is true, it means that we dont have notes in our localStorage
         //so, we will return 1 as an id
@@ -374,7 +375,7 @@ $scope.getNextId = function () {
     };
 
     $scope.uploadFiles = function(file, errFiles) {
-        debugger
+         
         if(file!= undefined){
             $scope.FileDictionary = file;
             $scope.ReadFile();
