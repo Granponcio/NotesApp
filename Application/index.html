@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Notes app - German Ponce</title>
+    <!--STYLES-->
+    <link rel="stylesheet" type="text/css" href="../Application/utilities/main.css">
+    <!-- SCRIPTS -->
+    <script src="../Application/utilities/js/jquery.min.js"></script>
+
+    <script src="../Application/utilities/js/tether.min.js"></script>
+    <script src="../Application/utilities/js/bootstrap.min.js"></script>
+    <script src="../Application/utilities/js/sweetalert.min.js"></script>
+
+    <script src="../Application/utilities/js/angular.js"></script>
+    <script src="../Application/utilities/js/notesapp.js"></script>
+    <script src="../Application/utilities/js/ng-file-upload.js"></script>
+
+    <script src="../Application/utilities/js/showErrors.js"></script>
+
+
+<style>
+.has-error{
+
+
+    border-color:red;
+}
+</style>
+
+</head>
+<body class="theme-default" ng-controller="NotesController" ng-app="myApp">
+<!--LOGO-->
+<nav class="top-menu" >
+    <div class="logo-container">
+        <a href="index.html" class="logo">
+            <img src="../Application/utilities/images/logo.png" alt="Notes App" />
+<!--//LOGO-->            
+        </a>
+<!-- MENU USER OPTIONS-->
+        <div class="menu">
+            
+            <div class="menu-user-block">
+                <i class="counter-icon icmn-cog" rel="popover" data-placement="bottom" title="Change notes color" popover></i>
+                <i class="counter-icon icmn-database-remove" ng-click="DeleteContent()"></i>
+                <i class="counter-icon icmn-upload" ng-hide="(Dictionary.length>0)" ngf-select="uploadFiles($file, $invalidFiles)" ngf-accept="'.txt'" ng-model="FileDictionary"  ></i>
+                <i class="counter-icon icmn-pencil7" ng-click="EditDictionary()"></i>
+                
+            </div>
+            
+            
+        </div>
+<!-- //MENU USER OPTIONS-->   
+
+       
+    </div>     
+    </div>
+</nav>
+
+<section class="page-content">
+<div class="page-content-inner">
+<!--COLOR PALETTE DIV-->
+        <div style="display:none" id="ColorPalette">
+            <div class="col-xs-2 ColorBoxes c1" ng-click="ChangeNoteColor('c1')">
+            </div>
+            <div class="col-xs-2 ColorBoxes c2" ng-click="ChangeNoteColor('c2')">
+            </div>
+            <div class="col-xs-2 ColorBoxes c3" ng-click="ChangeNoteColor('c3')">
+            </div>
+            <div class="col-xs-2 ColorBoxes c4" ng-click="ChangeNoteColor('c4')">
+            </div>
+            <div class="col-xs-2 ColorBoxes c5" ng-click="ChangeNoteColor('c5')">
+            </div>
+            <div class="col-xs-2 ColorBoxes c6" ng-click="ChangeNoteColor('c6')">   
+            </div>
+        </div>
+<!--//COLOR PALETTE DIV--> 
+<!--SEARCH INPUT -->
+<div class="col-md-12">
+<div class="col-xl-4 col-lg-4 col-sm-6 col-xs-12" style="float:right;margin-bottom:10px">
+<div class="right hidden-md-down margin-left-20">
+                <div class="search-block">
+                        <div class="form-input-icon form-input-icon-right">
+                            <i class="icmn-search"></i>
+                            <input type="text" class="form-control form-control-sm form-control-rounded" ng-keydown="Search()" ng-model="SearchText" placeholder="Search...">
+                            <button type="submit" class="search-block-submit "></button>
+                        </div>
+                </div>
+                </div>
+</div>
+</div>
+<!--//SEARCH INPUT -->      
+<!--NOTES CONTENT-->
+    <div class="dashboard-container app-gallery">
+        <div class="row">
+            <div class="col-xl-3 col-lg-6 col-sm-6 col-xs-12" ng-repeat="note in ListNotes | searchFilter: Filter">
+                <div class="widget widget-seven background-success app-gallery-item noteGallery">
+                    <div class="widget-body">
+                        <div class="widget-body-inner">
+                            <h5 class="text-uppercase">{{note.title}}</h5>
+                            <div class="col-md-12">
+                                <div class="col-xl-3 col-lg-4 col-sm-4 col-xs-3" style="padding:0px">
+                                    <i class="counter-icon icmn-file-empty2"></i>
+                                </div>
+                                <div class="col-xl-9 col-lg-8 col-sm-8 col-xs-9" style="padding-right:0px">
+                                    <span class="counter-count">
+                                        {{note.text}}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div class="app-gallery-item-hover">
+                        <div class="btn-group margin-inline">
+                            <button type="button" class="btn" ng-click="ViewNote(note)">
+                                <i class="icmn-pencil7"></i>
+                            </button>
+                            <button type="button" class="btn" ng-click="DeleteNote(note)">
+                                <i class="icmn-bin3"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-6 col-sm-6 col-xs-12">
+                <div class="widget widget-seven background-default app-gallery-itemAdd" ng-click="AddNewNote()">
+                    <div class="widget-body">
+                        <div href="javascript: void(0);" class="widget-body-inner">
+                            
+                            <i class="counter-iconAdd icmn-file-plus2"></i>
+                            <span class="counter-count">
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+</div>
+<!--// NOTES CONTENT -->
+
+<!--ADD/EDIT NOTE MODAL -->
+                <div class="modal fade" id="ModalNote" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <h4 class="modal-title" id="myModalLabel">New note</h4>
+                            </div>
+                            <div class="modal-body" style="overflow:auto">
+                                <!--***********MODAL BODY **********-->
+                               
+                                <div class="col-lg-12 row">
+
+                                     <form name="NotesForm" name="NotesForm">   
+                                        
+                                         <div class="col-md-12">
+                                            <label class="form-control-label">Title</label>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="input-group" >
+                                                <input type="text" class="form-control"  name="title" placeholder="Note title.." ng-model="Note.title" required/>
+                                                <span class="input-group-addon">
+                                                    <i class="icmn-pencil6"></i>
+                                                </span>
+                                            </div>
+                                        </div>       
+
+                                    
+                                        <div class="col-md-12">
+                                            <label class="form-control-label">Text</label>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group" >
+                                                <textarea class="form-control" name="text" ng-keydown="ReplaceText($event)" rows="3" placeholder="Note text.." ng-model="Note.text" required></textarea>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" ng-click="SaveNote()">Save changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+<!--// ADD/EDIT NOTE MODAL -->
+
+<!--ADD WORDS TO DICTIONARY MODAL -->
+                <div class="modal fade" id="ModalDictionary" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <h4 class="modal-title" id="myModalLabel">Edit Dictionary Words</h4>
+                            </div>
+                            <div class="modal-body" style="overflow:auto">
+                                <!--***********MODAL BODY **********-->
+                               
+                                <div class="col-lg-12 row">
+
+                                    <div class="form-group row">
+                                        <div class="col-md-12" ng-repeat="word in Dictionary" style="margin-bottom:10px">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" name="" ng-model="word.text" >
+                                                <span class="input-group-btn">
+                                                    <a ng-click="SaveDictionaryWord(word)" class="btn btn-success">
+                                                        <i class="icmn-floppy-disk2"></i>
+                                                    </a>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+<!--// ADD WORDS TO DICTIONARY MODAL -->
+
+
+    
+
+<!-- Page Scripts -->
+<script>
+
+    $(function () {
+
+       
+        $("[rel=popover]").popover({
+            content: $('#ColorPalette').html(),
+            html :true
+          
+        }).click(function(){
+        $(this).popover('show');
+
+        });
+
+
+        $("[data-toggle=tooltip]").tooltip();
+
+    });
+
+</script>
+
+</section>
+
+</body>
+</html>
